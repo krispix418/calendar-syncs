@@ -1,0 +1,223 @@
+{
+  "current_week": 1,
+  "last_updated": "2025-12-05",
+  "workout_completion_count": {
+    "upper_push": 1,
+    "lower_hamstring_posterior": 1,
+    "upper_pull": 0,
+    "lower_quad_glute": 0,
+    "total": 2
+  },
+  "deload_schedule": {
+    "deload_every_n_workouts": 8,
+    "next_deload_at_workout_count": 8,
+    "deload_logic": "Every 8 full workouts trigger a deload. Cardio-only sessions do NOT count."
+  },
+  "ramping_exercises": {
+    "squats": {
+      "current_ramp": [
+        30,
+        40,
+        55
+      ],
+      "progression_pace": 2,
+      "ramp_progression_notes": "After completing 2 full quad/glute workouts, increase each ramp weight by 5 lbs (e.g., 30\u219235, 40\u219245, 55\u219260)",
+      "completions_since_last_increase": 0
+    }
+  },
+  "workout_states": {
+    "upper_push": {
+      "last_completed": null,
+      "exercises": {
+        "chest_press": {
+          "current_weight_lbs": 15,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Per hand for dumbbells - starting conservative"
+        },
+        "incline_chest_press": {
+          "current_weight_lbs": 15,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Per hand for dumbbells - starting weight"
+        },
+        "shoulder_press": {
+          "current_weight_lbs": 12,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Starting weight"
+        },
+        "lateral_raises": {
+          "current_weight_lbs": 8,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Starting light for shoulder isolation"
+        },
+        "tricep_pushdowns": {
+          "current_weight_lbs": 30,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Cable stack weight"
+        },
+        "chest_flyes": {
+          "current_weight_lbs": 15,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Finishing isolation move"
+        }
+      }
+    },
+    "lower_hamstring_posterior": {
+      "last_completed": null,
+      "exercises": {
+        "romanian_deadlifts": {
+          "current_weight_lbs": 45,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Total weight (Smith bar + plates) or 25-30 lbs per hand for dumbbells"
+        },
+        "leg_press_high_foot": {
+          "current_weight_lbs": 55,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "High foot placement for hamstrings/glutes"
+        },
+        "hamstring_curls": {
+          "current_weight_lbs": 40,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Your favorite! Machine weight"
+        },
+        "bulgarian_split_squats": {
+          "current_weight_lbs": 15,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Per hand - these are challenging!"
+        },
+        "hip_thrusts": {
+          "current_weight_lbs": 45,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Starting with barbell or light smith machine"
+        },
+        "stiff_leg_deadlifts": {
+          "current_weight_lbs": 25,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Per hand for dumbbells - similar to RDLs but straighter legs"
+        }
+      }
+    },
+    "upper_pull": {
+      "last_completed": null,
+      "exercises": {
+        "lat_pulldown": {
+          "current_weight_lbs": 60,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Cable stack weight - moderate starting point"
+        },
+        "seated_cable_row": {
+          "current_weight_lbs": 70,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Cable stack weight"
+        },
+        "single_arm_dumbbell_row": {
+          "current_weight_lbs": 15,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Based on your example! You said 15\u219225 progression works well"
+        },
+        "face_pulls": {
+          "current_weight_lbs": 30,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Cable stack weight - lighter for rear delts"
+        }
+      }
+    },
+    "lower_quad_glute": {
+      "last_completed": null,
+      "exercises": {
+        "squats": {
+          "current_weight_lbs": 55,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "You said max was 65lbs - starting conservative at 55lbs"
+        },
+        "stationary_lunges": {
+          "current_weight_lbs": 12,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Per hand for dumbbells - alternate legs in place"
+        },
+        "leg_extensions": {
+          "current_weight_lbs": 50,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Machine weight - quad isolation"
+        },
+        "leg_press_standard": {
+          "current_weight_lbs": 55,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Standard foot placement - overall lower body"
+        },
+        "hip_abduction": {
+          "current_weight_lbs": 60,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Machine weight - glute medius focus"
+        },
+        "glute_kickbacks": {
+          "current_weight_lbs": 20,
+          "current_reps": 12,
+          "sets_completed": 3,
+          "progression_notes": "Cable stack weight per leg"
+        }
+      }
+    }
+  },
+  "progression_history": {
+    "notes": "This section will be populated as the script runs and tracks your progression over time",
+    "changes": [
+      {
+        "date": "2025-12-03",
+        "old_week": 1,
+        "new_week": 8,
+        "weeks_scheduled": 7
+      },
+      {
+        "date": "2025-12-04",
+        "old_week": 8,
+        "new_week": 15,
+        "weeks_scheduled": 7
+      },
+      {
+        "date": "2025-12-05",
+        "old_week": 1,
+        "new_week": 7,
+        "weeks_scheduled": 6,
+        "full_workouts_added": 27,
+        "total_workout_count": 27
+      },
+      {
+        "date": "2025-12-05",
+        "old_week": 7,
+        "new_week": 13,
+        "weeks_scheduled": 6,
+        "full_workouts_added": 27,
+        "total_workout_count": 54
+      },
+      {
+        "date": "2025-12-05",
+        "old_week": 13,
+        "new_week": 18,
+        "weeks_scheduled": 5,
+        "full_workouts_added": 23,
+        "total_workout_count": 77
+      }
+    ]
+  }
+}

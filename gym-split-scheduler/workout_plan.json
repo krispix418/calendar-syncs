@@ -1,0 +1,468 @@
+{
+  "program_info": {
+    "name": "Fat Loss & Toning - Upper/Lower Split",
+    "goal": "Fat loss, muscle toning, strength maintenance",
+    "frequency": "4 days per week (rotating)",
+    "duration_weeks": "Ongoing with deload every 4 weeks",
+    "notes": "Designed to complement Solidcore classes (2-3x/week). Focus on form and progressive overload.",
+    "weight_notation": "All weights listed are TOTAL weight for barbell/Smith machine exercises, or PER HAND for dumbbell exercises"
+  },
+  
+  "progression_rules": {
+    "starting_reps": 12,
+    "target_reps": 15,
+    "sets": 3,
+    "weight_increase_lbs": 5,
+    "progression_logic": "When you complete 3x15 with good form, increase weight by 5lbs and return to 3x12",
+    "deload_frequency_weeks": 4,
+    "deload_percentage": 0.20,
+    "deload_logic": "Every 4th week, reduce all weights by 20% while maintaining reps"
+  },
+
+  "workouts": {
+    "upper_push": {
+      "name": "Upper Push + Stairmaster",
+      "duration_minutes": 85,
+      "focus": "Chest, Shoulders, Triceps",
+      "cardio": {
+        "type": "Stairmaster",
+        "duration_minutes": 25,
+        "timing": "After weights",
+        "intensity": "Moderate-high intensity (level 8)"
+      },
+      
+      "warmup": {
+        "duration_minutes": 5,
+        "exercises": [
+          "Arm circles (forward & backward) - 20 reps each direction",
+          "Incline push-ups - 12 reps"
+        ]
+      },
+
+      "main_exercises": [
+        {
+          "exercise": "Shoulder Press",
+          "primary_equipment": "Dumbbell",
+          "alternative_equipment": "Machine Shoulder Press",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 12,
+          "notes": "Seated or standing. Keep core tight, don't arch lower back. Per hand for dumbbells.",
+          "rest_seconds": 75
+        },
+        {
+          "exercise": "Lateral Raises",
+          "primary_equipment": "Dumbbell",
+          "alternative_equipment": "Cable Lateral Raises",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 8,
+          "notes": "Isolation for side delts. Slight bend in elbows, control the movement. Per hand for dumbbells.",
+          "rest_seconds": 60
+        },
+        {
+          "exercise": "Chest Press",
+          "primary_equipment": "Smith Machine",
+          "alternative_equipment": "Dumbbell Chest Press",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 15,
+          "notes": "Primary compound movement. Control the descent, explosive press up. Per hand for dumbbells.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Incline Chest Press",
+          "primary_equipment": "Smith Machine (incline bench)",
+          "alternative_equipment": "Dumbbell Incline Press",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 15,
+          "notes": "Upper chest focus. 30-45 degree angle. Per hand for dumbbells.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Tricep Pushdowns",
+          "primary_equipment": "Cable Machine (rope attachment)",
+          "alternative_equipment": "Overhead Dumbbell Extension",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 30,
+          "notes": "Keep elbows tucked. Full extension at bottom.",
+          "rest_seconds": 60
+        },
+        {
+          "exercise": "Chest Flyes",
+          "primary_equipment": "Cable Machine",
+          "alternative_equipment": "Dumbbell Flyes",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 15,
+          "notes": "Finishing move. Focus on squeeze at center.",
+          "rest_seconds": 60
+        }
+      ],
+
+      "cooldown": {
+        "duration_minutes": 5,
+        "notes": "Stretch chest (doorway stretch), shoulders (cross-body), and triceps (overhead)"
+      }
+    },
+
+    "lower_hamstring_posterior": {
+      "name": "Lower Body (Hamstring Focus) + Walking",
+      "duration_minutes": 105,
+      "focus": "Hamstrings, Glutes, Posterior Chain",
+      "cardio": {
+        "type": "Walking (LISS)",
+        "duration_minutes": 45,
+        "timing": "After weights",
+        "intensity": "Moderate pace (3.0-3.5 mph, incline optional)"
+      },
+
+      "warmup": {
+        "duration_minutes": 5,
+        "exercises": [
+          "Leg swings (forward/back & side-to-side) - 10 each leg, each direction",
+          "Bodyweight glute bridges - 15 reps"
+        ]
+      },
+
+      "main_exercises": [
+        {
+          "exercise": "Romanian Deadlifts (RDL)",
+          "primary_equipment": "Barbell or Smith Machine",
+          "alternative_equipment": "Dumbbell RDLs",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 45,
+          "notes": "Total weight (Smith bar + 25-30 lbs plates) or 25-30 lbs per hand for dumbbells. Hinge at hips, slight knee bend. Feel stretch in hamstrings. Keep back neutral.",
+          "rest_seconds": 120
+        },
+        {
+          "exercise": "Hip Thrusts",
+          "primary_equipment": "Barbell or Smith Machine",
+          "alternative_equipment": "Dumbbell on hips",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 45,
+          "notes": "Shoulders on bench, squeeze glutes at top. Hold for 1 second.",
+          "rest_seconds": 75
+        },
+        {
+          "exercise": "Leg Press (High Foot Placement)",
+          "primary_equipment": "Leg Press Machine",
+          "alternative_equipment": "Goblet Squats",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 55,
+          "notes": "Feet higher on platform = more hamstring/glute. Full depth.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Hamstring Curls",
+          "primary_equipment": "Lying Leg Curl Machine",
+          "alternative_equipment": "Seated Leg Curl Machine",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 40,
+          "notes": "Your favorite! Slow eccentric (3 seconds down).",
+          "rest_seconds": 75
+        },
+        {
+          "exercise": "Bulgarian Split Squats",
+          "primary_equipment": "Dumbbells",
+          "alternative_equipment": "Bodyweight (hold bench for balance)",
+          "sets": 3,
+          "rep_range": "12-15 each leg",
+          "starting_weight_lbs": 15,
+          "notes": "Rear foot elevated. Front shin vertical. Great for glutes & hamstrings. Per hand for dumbbells.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Stiff-Leg Deadlifts",
+          "primary_equipment": "Dumbbells",
+          "alternative_equipment": "Barbell or Smith Machine",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 25,
+          "notes": "Similar to RDLs but with straighter legs. Hip hinge movement. Feel deep stretch in hamstrings. Per hand for dumbbells.",
+          "rest_seconds": 60
+        }
+      ],
+
+      "cooldown": {
+        "duration_minutes": 5,
+        "notes": "Stretch hamstrings (seated toe touch), hip flexors (lunge stretch), and glutes (figure-4)"
+      }
+    },
+
+    "upper_pull": {
+      "name": "Upper Pull + Stairmaster",
+      "duration_minutes": 85,
+      "focus": "Back, Rear Delts",
+      "cardio": {
+        "type": "Stairmaster",
+        "duration_minutes": 25,
+        "timing": "After weights",
+        "intensity": "Moderate-high intensity (level 8)"
+      },
+
+      "warmup": {
+        "duration_minutes": 5,
+        "exercises": [
+          "Arm circles (forward & backward) - 20 reps each direction",
+          "Scapular retractions (squeeze shoulder blades) - 15 reps"
+        ]
+      },
+
+      "main_exercises": [
+        {
+          "exercise": "Lat Pulldown",
+          "primary_equipment": "Cable Lat Pulldown Machine",
+          "alternative_equipment": "Assisted Pull-up Machine",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 60,
+          "notes": "Pull to upper chest. Retract shoulder blades. Wide grip.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Seated Cable Row",
+          "primary_equipment": "Cable Row Machine",
+          "alternative_equipment": "Dumbbell Bent-Over Rows",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 70,
+          "notes": "Squeeze shoulder blades together. Keep chest up.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Single-Arm Dumbbell Row",
+          "primary_equipment": "Dumbbell",
+          "alternative_equipment": "Cable Single-Arm Row",
+          "sets": 3,
+          "rep_range": "12-15 each arm",
+          "starting_weight_lbs": 15,
+          "notes": "Based on your example! Progress 15→20→25 lbs. Elbow close to body.",
+          "rest_seconds": 75
+        },
+        {
+          "exercise": "Face Pulls",
+          "primary_equipment": "Cable Machine (rope attachment)",
+          "alternative_equipment": "Resistance Band Face Pulls",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 30,
+          "notes": "Pull to face level. Great for rear delts and posture.",
+          "rest_seconds": 60
+        }
+      ],
+
+      "cooldown": {
+        "duration_minutes": 5,
+        "notes": "Stretch lats (doorway lat stretch) and upper back"
+      }
+    },
+
+    "lower_quad_glute": {
+      "name": "Lower Body (Quad/Glute Focus) + Walking",
+      "duration_minutes": 105,
+      "focus": "Quads, Glutes, Overall Lower Body",
+      "cardio": {
+        "type": "Walking (LISS)",
+        "duration_minutes": 45,
+        "timing": "After weights",
+        "intensity": "Moderate pace (3.0-3.5 mph, incline optional)"
+      },
+
+      "warmup": {
+        "duration_minutes": 5,
+        "exercises": [
+          "Leg swings (forward/back & side-to-side) - 10 each leg, each direction",
+          "Bodyweight squats - 15 reps"
+        ]
+      },
+
+      "main_exercises": [
+        {
+          "exercise": "Squats",
+          "primary_equipment": "Smith Machine",
+          "alternative_equipment": "Goblet Squats (Dumbbell)",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 55,
+          "notes": "Based on your 65lb max, starting conservative. Depth to parallel or below.",
+          "rest_seconds": 120
+        },
+        {
+          "exercise": "Leg Press (Standard Foot Placement)",
+          "primary_equipment": "Leg Press Machine",
+          "alternative_equipment": "Smith Machine Squats",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 55,
+          "notes": "Feet shoulder-width, mid-platform. Overall lower body.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Leg Extensions",
+          "primary_equipment": "Leg Extension Machine",
+          "alternative_equipment": "Banded Leg Extensions",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 50,
+          "notes": "Quad isolation. Full extension at top, control down.",
+          "rest_seconds": 75
+        },
+        {
+          "exercise": "Hip Abduction Machine",
+          "primary_equipment": "Hip Abduction Machine",
+          "alternative_equipment": "Banded Lateral Walks",
+          "sets": 3,
+          "rep_range": "12-15",
+          "starting_weight_lbs": 60,
+          "notes": "Targets glute medius. Important for hip stability.",
+          "rest_seconds": 60
+        },
+        {
+          "exercise": "Stationary Lunges",
+          "primary_equipment": "Dumbbells",
+          "alternative_equipment": "Bodyweight (if needed)",
+          "sets": 3,
+          "rep_range": "12-15 each leg",
+          "starting_weight_lbs": 12,
+          "notes": "Alternate legs in place. Front knee doesn't pass toes. Great for quads and glutes. Per hand for dumbbells.",
+          "rest_seconds": 90
+        },
+        {
+          "exercise": "Glute Kickbacks",
+          "primary_equipment": "Cable Machine (ankle strap)",
+          "alternative_equipment": "Glute Kickback Machine",
+          "sets": 3,
+          "rep_range": "12-15 each leg",
+          "starting_weight_lbs": 20,
+          "notes": "Squeeze glute at top. Keep hips square.",
+          "rest_seconds": 60
+        }
+      ],
+
+      "cooldown": {
+        "duration_minutes": 5,
+        "notes": "Stretch quads (standing quad stretch), hip flexors, and glutes"
+      }
+    }
+  },
+
+  "cardio_only_session": {
+    "name": "Cardio Session - Post Solidcore",
+    "duration_minutes": 25,
+    "description": "Quick cardio session after Solidcore class",
+    "cardio": {
+      "type": "Stairmaster",
+      "duration_minutes": 25,
+      "intensity": "Moderate-high intensity (level 8)",
+      "notes": "This is a recovery/light session after Solidcore, not a full workout"
+    }
+  },
+
+  "scheduling_rules": {
+    "workout_rotation": ["upper_push", "lower_hamstring_posterior", "upper_pull", "lower_quad_glute"],
+    "rotation_logic": "Cycle through these 4 workouts in order. Only FULL WORKOUTS advance the rotation. Cardio-only sessions do NOT advance rotation.",
+
+    "event_types": {
+      "full_workout": {
+        "description": "Complete workout with weights + cardio",
+        "advances_rotation": true,
+        "counts_toward_deload": true
+      },
+      "cardio_only": {
+        "description": "Cardio-only session after Solidcore (no weights)",
+        "advances_rotation": false,
+        "counts_toward_deload": false
+      }
+    },
+
+    "weekday_rules": {
+      "monday": {
+        "default_time": "07:15",
+        "default_event_type": "full_workout",
+        "constraint": "Must finish by 09:00",
+        "reason": "Morning session before afternoon Solidcore"
+      },
+      "tuesday": {
+        "if_solidcore": {
+          "event_type": "cardio_only",
+          "time": "after_solidcore_plus_30min"
+        },
+        "if_no_solidcore": {
+          "event_type": "full_workout",
+          "time": "20:00"
+        }
+      },
+      "wednesday": {
+        "if_solidcore": {
+          "event_type": "cardio_only",
+          "time": "after_solidcore_plus_30min"
+        },
+        "if_no_solidcore": {
+          "event_type": "full_workout",
+          "time": "20:00"
+        }
+      },
+      "thursday": {
+        "if_solidcore": {
+          "event_type": "cardio_only",
+          "time": "after_solidcore_plus_30min"
+        },
+        "if_no_solidcore": {
+          "event_type": "full_workout",
+          "time": "20:00"
+        }
+      },
+      "friday": {
+        "default_time": "07:15",
+        "default_event_type": "full_workout",
+        "constraint": "Must finish by 09:00",
+        "reason": "Morning session before afternoon Solidcore"
+      }
+    },
+
+    "weekend_rules": {
+      "saturday": {
+        "default_event_type": "full_workout",
+        "if_solidcore": {
+          "time": "after_solidcore_plus_30min"
+        },
+        "if_no_solidcore": {
+          "time": "15:00"
+        }
+      },
+      "sunday": {
+        "default_event_type": "full_workout",
+        "if_solidcore": {
+          "time": "after_solidcore_plus_30min"
+        },
+        "if_no_solidcore": {
+          "time": "15:00"
+        }
+      }
+    },
+
+    "solidcore_detection": {
+      "calendar_search_terms": ["solidcore", "signature50", "focus50", "advanced65"],
+      "buffer_minutes": 30,
+      "logic": "Search for any of the terms in calendar events. If found, apply appropriate scheduling rules."
+    },
+
+    "month_generation": {
+      "run_frequency": "Manual - user initiates when ready to plan next month",
+      "cleanup_strategy": "Delete all existing gym workout events (both full workouts and cardio sessions) from target month before creating new ones",
+      "calendar_event_format": {
+        "full_workout_title": "[Workout Name] (e.g., 'Upper Push' or 'Lower Body - Hamstrings')",
+        "cardio_only_title": "Cardio Session - Post Solidcore",
+        "description": "Full workout details including warmup, exercises with sets/reps/weight, cardio, cooldown",
+        "location": "Planet Fitness"
+      }
+    }
+  }
+}
