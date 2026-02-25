@@ -214,14 +214,15 @@ def identify_solidcore_classes(events):
     return solidcore_schedule
 
 
-def delete_gym_events(credentials, year, month, dry_run=False):
+def delete_gym_events(credentials, year, month, start_day=1, dry_run=False):
     """
-    Delete existing gym workout events from target month.
+    Delete existing gym workout events from target month, starting from start_day.
 
     Args:
         credentials: Google API credentials
         year: Integer year
         month: Integer month
+        start_day: Integer day of month to start deleting from (default: 1)
         dry_run: If True, only log what would be deleted
 
     Returns:
@@ -238,6 +239,9 @@ def delete_gym_events(credentials, year, month, dry_run=False):
     # Get all events for the month
     events = get_month_calendar_events(credentials, year, month)
 
+    # Cutoff: only delete events on or after start_day
+    cutoff = EASTERN.localize(datetime(year, month, start_day, 0, 0, 0))
+
     gym_event_keywords = ['Upper Push', 'Lower Body', 'Upper Pull', 'Cardio Session']
     events_to_delete = []
 
@@ -246,14 +250,18 @@ def delete_gym_events(credentials, year, month, dry_run=False):
 
         # Check if this is a gym workout event
         if any(keyword in title for keyword in gym_event_keywords):
+            # Parse event start time and skip if before cutoff
+            event_start = event['start'].get('dateTime', event['start'].get('date'))
+            event_dt = datetime.fromisoformat(event_start.replace('Z', '+00:00')).astimezone(EASTERN)
+            if event_dt < cutoff:
+                continue
+
             events_to_delete.append(event)
 
             if dry_run:
-                logger.info(f"[DRY RUN] Would delete: {title} on "
-                           f"{event['start'].get('dateTime', event['start'].get('date'))}")
+                logger.info(f"[DRY RUN] Would delete: {title} on {event_start}")
             else:
-                logger.info(f"Deleting: {title} on "
-                           f"{event['start'].get('dateTime', event['start'].get('date'))}")
+                logger.info(f"Deleting: {title} on {event_start}")
 
     # Delete events if not dry run
     if not dry_run:
@@ -355,7 +363,7 @@ def get_ramping_weights(progression_state):
         return [30, 40, 55]
 
 
-def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation):
+def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation, start_day=1):
     """
     Generate gym workout schedule for the month using V2 logic.
 
@@ -364,6 +372,7 @@ def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation
         month: Integer month
         solidcore_schedule: Dict from identify_solidcore_classes()
         workout_rotation: List of workout types to cycle through
+        start_day: Integer day of month to start scheduling from (default: 1)
 
     Returns:
         list: List of dicts with {date, event_type, workout_type, start_time, duration_minutes}
@@ -396,7 +405,7 @@ def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation
     # Get all days in the month
     _, last_day = monthrange(year, month)
 
-    for day in range(1, last_day + 1):
+    for day in range(start_day, last_day + 1):
         date = datetime(year, month, day)
         date_string = date.strftime('%Y-%m-%d')
         day_of_week = date.weekday()  # 0=Monday, 6=Sunday
@@ -780,18 +789,27 @@ def main():
         events = get_month_calendar_events(credentials, year, month)
         solidcore_schedule = identify_solidcore_classes(events)
 
-        # 3. DELETE EXISTING GYM EVENTS
+        # Determine start day: if scheduling current month, start from today
+        today = datetime.now(EASTERN)
+        if year == today.year and month == today.month:
+            start_day = today.day
+            logger.info(f"Current month detected — scheduling from day {start_day} onwards")
+        else:
+            start_day = 1
+            logger.info(f"Future month — scheduling full month from day 1")
+
+        # 3. DELETE EXISTING GYM EVENTS (from start_day onwards)
         logger.info("\n3. DELETE EXISTING GYM EVENTS")
         logger.info("-" * 70)
 
-        deleted_count = delete_gym_events(credentials, year, month, dry_run)
+        deleted_count = delete_gym_events(credentials, year, month, start_day, dry_run)
 
-        # 4. GENERATE WORKOUT SCHEDULE
+        # 4. GENERATE WORKOUT SCHEDULE (from start_day onwards)
         logger.info("\n4. GENERATE WORKOUT SCHEDULE")
         logger.info("-" * 70)
 
         workout_rotation = workout_plan['scheduling_rules']['workout_rotation']
-        schedule = determine_workout_schedule(year, month, solidcore_schedule, workout_rotation)
+        schedule = determine_workout_schedule(year, month, solidcore_schedule, workout_rotation, start_day)
 
         # 5. CREATE CALENDAR EVENTS
         logger.info("\n5. CREATE CALENDAR EVENTS")
