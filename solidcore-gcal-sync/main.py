@@ -162,77 +162,71 @@ def main(days_back: int = 30, dry_run: bool = False):
             classes = get_solidcore_classes(credentials, days_back=days_back)
 
             if not classes:
-                print("ℹ No Solidcore classes found in your email.")
-                print("\nPossible reasons:")
-                print("  - No booking confirmation emails in the date range")
-                print("  - Emails are from a different sender (check email_parser.py)")
-                print("  - Emails don't match the expected format")
-                return 0
+                print("ℹ No new Solidcore class confirmations found in your email.\n")
+                summary = {'created': 0, 'duplicates': 0, 'errors': 0}
+            else:
+                print(f"✓ Found {len(classes)} classes\n")
 
-            print(f"✓ Found {len(classes)} classes\n")
+                # Show a preview of found classes
+                print("Preview of found classes:")
+                for i, class_event in enumerate(classes[:3], 1):
+                    start_time = datetime.fromisoformat(class_event['start_time'])
+                    print(f"  {i}. {class_event['title']}")
+                    print(f"     {start_time.strftime('%A, %B %d at %I:%M %p')}")
+                    print(f"     {class_event['location']}")
 
-            # Show a preview of found classes
-            print("Preview of found classes:")
-            for i, class_event in enumerate(classes[:3], 1):
-                start_time = datetime.fromisoformat(class_event['start_time'])
-                print(f"  {i}. {class_event['title']}")
-                print(f"     {start_time.strftime('%A, %B %d at %I:%M %p')}")
-                print(f"     {class_event['location']}")
-
-            if len(classes) > 3:
-                print(f"  ... and {len(classes) - 3} more")
-            print()
+                if len(classes) > 3:
+                    print(f"  ... and {len(classes) - 3} more")
+                print()
 
         except Exception as e:
             print(f"✗ Error searching emails: {e}")
             logger.exception("Email search failed")
             return 1
 
-        # Step 3: Create calendar events
-        if dry_run:
-            print("Step 3: DRY RUN - Checking for duplicates (no events will be created)...")
-        else:
-            print("Step 3: Creating calendar events...")
-        print("-" * 60)
-
-        try:
+        # Step 3: Create calendar events (only if classes were found)
+        if classes:
             if dry_run:
-                # For dry run, we still call the function but could add a flag
-                # For now, we'll just report what we found
-                print(f"ℹ Would process {len(classes)} classes")
-                print(f"ℹ Checking for existing events to avoid duplicates...")
-
-                # Actually check for duplicates without creating
-                from calendar_manager import _get_existing_events, _is_duplicate
-                from googleapiclient.discovery import build
-
-                service = build('calendar', 'v3', credentials=credentials)
-                existing_events = _get_existing_events(service, 'primary', classes)
-
-                would_create = 0
-                would_skip = 0
-
-                for class_event in classes:
-                    if _is_duplicate(class_event, existing_events):
-                        would_skip += 1
-                    else:
-                        would_create += 1
-
-                summary = {
-                    'created': would_create,
-                    'duplicates': would_skip,
-                    'errors': 0
-                }
-
-                print(f"✓ Dry run complete\n")
+                print("Step 3: DRY RUN - Checking for duplicates (no events will be created)...")
             else:
-                summary = create_calendar_events(credentials, classes)
-                print(f"✓ Calendar sync complete\n")
+                print("Step 3: Creating calendar events...")
+            print("-" * 60)
 
-        except Exception as e:
-            print(f"✗ Error creating calendar events: {e}")
-            logger.exception("Calendar creation failed")
-            return 1
+            try:
+                if dry_run:
+                    print(f"ℹ Would process {len(classes)} classes")
+                    print(f"ℹ Checking for existing events to avoid duplicates...")
+
+                    from calendar_manager import _get_existing_events, _is_duplicate
+                    from googleapiclient.discovery import build
+
+                    service = build('calendar', 'v3', credentials=credentials)
+                    existing_events = _get_existing_events(service, 'primary', classes)
+
+                    would_create = 0
+                    would_skip = 0
+
+                    for class_event in classes:
+                        if _is_duplicate(class_event, existing_events):
+                            would_skip += 1
+                        else:
+                            would_create += 1
+
+                    summary = {
+                        'created': would_create,
+                        'duplicates': would_skip,
+                        'errors': 0
+                    }
+
+                    print(f"✓ Dry run complete\n")
+                else:
+                    summary = create_calendar_events(credentials, classes)
+                    print(f"✓ Calendar sync complete\n")
+
+            except Exception as e:
+                print(f"✗ Error creating calendar events: {e}")
+                logger.exception("Calendar creation failed")
+                return 1
 
         # Step 4: Search and parse Gmail for Solidcore cancellations
         print(f"Step 4: Searching Gmail for cancellations (last {days_back} days)...")
