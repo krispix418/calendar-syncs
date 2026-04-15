@@ -179,8 +179,8 @@ def identify_solidcore_classes(events):
         if any(keyword in title for keyword in ['cardio session', 'upper push', 'upper pull', 'lower body']):
             continue
 
-        # Check if event is a Solidcore class (matches: solidcore, signature50, focus50, or advanced65)
-        if any(keyword in title for keyword in ['solidcore', 'signature50', 'focus50', 'advanced65']):
+        # Check if event is a Solidcore class (matches: solidcore, signature50, focus50, advanced65, or power30)
+        if any(keyword in title for keyword in ['solidcore', 'signature50', 'focus50', 'advanced65', 'power30']):
             # Parse start and end times
             start = event['start'].get('dateTime', event['start'].get('date'))
             end = event['end'].get('dateTime', event['end'].get('date'))
@@ -212,6 +212,47 @@ def identify_solidcore_classes(events):
 
     logger.info(f"Total Solidcore classes identified: {len(solidcore_schedule)}")
     return solidcore_schedule
+
+
+def identify_vacation_days(events):
+    """
+    Find dates covered by multi-day all-day events (assumed to be vacation/travel).
+
+    Args:
+        events: List of calendar events
+
+    Returns:
+        set: Date strings (YYYY-MM-DD) to skip when scheduling gym workouts
+    """
+    from datetime import date as date_type, timedelta as td
+
+    vacation_days = set()
+
+    for event in events:
+        start = event.get('start', {})
+        end = event.get('end', {})
+
+        # All-day events use 'date', not 'dateTime'
+        if 'date' not in start or 'dateTime' in start:
+            continue
+
+        start_date = date_type.fromisoformat(start['date'])
+        end_date = date_type.fromisoformat(end['date'])  # exclusive end in Google Calendar
+
+        # Only care about multi-day spans (>1 day)
+        if (end_date - start_date).days <= 1:
+            continue
+
+        title = event.get('summary', 'Unknown')
+        current = start_date
+        while current < end_date:
+            day_str = current.strftime('%Y-%m-%d')
+            vacation_days.add(day_str)
+            logger.info(f"Vacation day found: {day_str} (event: \"{title}\")")
+            current += td(days=1)
+
+    logger.info(f"Total vacation days identified: {len(vacation_days)}")
+    return vacation_days
 
 
 def delete_gym_events(credentials, year, month, start_day=1, dry_run=False):
@@ -294,12 +335,14 @@ def determine_event_type(date, day_of_week, solidcore_schedule):
             event_type: "full_workout" or "cardio_only"
             start_time_or_rule: datetime object or "after_solidcore_plus_30min" or None
 
-    V2 Logic:
-        Weekdays (Mon-Fri):
-            - Mon/Fri WITHOUT Solidcore: full_workout at 7:15 AM (morning)
-            - Mon/Fri WITH Solidcore: cardio_only after Solidcore + 30 min
-            - Tue/Wed/Thu WITH Solidcore: cardio_only after Solidcore + 30 min
-            - Tue/Wed/Thu WITHOUT Solidcore: full_workout at 8 PM
+    V3 Logic:
+        Tuesday (1) / Thursday (3): always skip — rest days
+        Monday (0) / Friday (4):
+            - WITH Solidcore: skip (no post-Solidcore cardio on weekdays)
+            - WITHOUT Solidcore: full_workout at 7:15 AM
+        Wednesday (2):
+            - WITH Solidcore: skip (no post-Solidcore cardio on weekdays)
+            - WITHOUT Solidcore: full_workout at 8 PM
 
         Weekends (Sat/Sun):
             - Always full_workout
@@ -309,29 +352,22 @@ def determine_event_type(date, day_of_week, solidcore_schedule):
     date_string = date.strftime('%Y-%m-%d')
     solidcore = solidcore_schedule.get(date_string)
 
-    # Weekdays: Monday (0), Tuesday (1), Wednesday (2), Thursday (3), Friday (4)
-    if day_of_week in [0, 1, 2, 3, 4]:
-        # Monday or Friday
-        if day_of_week in [0, 4]:
-            if solidcore:
-                # WITH Solidcore: Cardio only after Solidcore
-                buffer = timedelta(minutes=30)
-                start_time = solidcore['end_time'] + buffer
-                return ("cardio_only", start_time)
-            else:
-                # WITHOUT Solidcore: Full workout at 7:15 AM
-                return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 7, 15)))
+    # Tuesday (1) and Thursday (3): rest days — skip entirely
+    if day_of_week in [1, 3]:
+        return (None, None)
 
-        # Tuesday, Wednesday, Thursday
-        else:
-            if solidcore:
-                # Cardio only after Solidcore
-                buffer = timedelta(minutes=30)
-                start_time = solidcore['end_time'] + buffer
-                return ("cardio_only", start_time)
-            else:
-                # Full workout at 8 PM
-                return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 20, 0)))
+    # Weekdays: Monday (0), Wednesday (2), Friday (4)
+    if day_of_week in [0, 2, 4]:
+        if solidcore:
+            # WITH Solidcore on a weekday: skip (no post-Solidcore cardio on weekdays)
+            return (None, None)
+
+        # Monday or Friday WITHOUT Solidcore: full workout at 7:15 AM
+        if day_of_week in [0, 4]:
+            return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 7, 15)))
+
+        # Wednesday WITHOUT Solidcore: full workout at 8 PM
+        return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 20, 0)))
 
     # Weekends: Saturday (5), Sunday (6)
     elif day_of_week in [5, 6]:
@@ -363,7 +399,7 @@ def get_ramping_weights(progression_state):
         return [30, 40, 55]
 
 
-def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation, start_day=1):
+def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation, start_day=1, vacation_days=None):
     """
     Generate gym workout schedule for the month using V2 logic.
 
@@ -401,6 +437,7 @@ def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation
     """
     schedule = []
     rotation_index = 0
+    vacation_days = vacation_days or set()
 
     # Get all days in the month
     _, last_day = monthrange(year, month)
@@ -409,6 +446,11 @@ def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation
         date = datetime(year, month, day)
         date_string = date.strftime('%Y-%m-%d')
         day_of_week = date.weekday()  # 0=Monday, 6=Sunday
+
+        # Skip vacation days (multi-day all-day calendar events)
+        if date_string in vacation_days:
+            logger.info(f"Skipping vacation day: {date_string}")
+            continue
 
         # Determine event type and start time using V2 logic
         event_type, start_time = determine_event_type(date, day_of_week, solidcore_schedule)
@@ -788,6 +830,7 @@ def main():
 
         events = get_month_calendar_events(credentials, year, month)
         solidcore_schedule = identify_solidcore_classes(events)
+        vacation_days = identify_vacation_days(events)
 
         # Determine start day: if scheduling current month, start from today
         today = datetime.now(EASTERN)
@@ -809,7 +852,7 @@ def main():
         logger.info("-" * 70)
 
         workout_rotation = workout_plan['scheduling_rules']['workout_rotation']
-        schedule = determine_workout_schedule(year, month, solidcore_schedule, workout_rotation, start_day)
+        schedule = determine_workout_schedule(year, month, solidcore_schedule, workout_rotation, start_day, vacation_days)
 
         # 5. CREATE CALENDAR EVENTS
         logger.info("\n5. CREATE CALENDAR EVENTS")
@@ -864,6 +907,7 @@ def main():
         logger.info("=" * 70)
         logger.info(f"Month: {year}-{month:02d}")
         logger.info(f"Solidcore classes found: {len(solidcore_schedule)}")
+        logger.info(f"Vacation days skipped: {len(vacation_days)}")
         logger.info(f"Gym events deleted: {deleted_count}")
         logger.info(f"\nEvents created:")
         logger.info(f"  - Full workouts: {full_workout_count}")

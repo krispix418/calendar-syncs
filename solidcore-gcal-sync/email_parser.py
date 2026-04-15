@@ -268,14 +268,14 @@ def _extract_class_details(body: str, subject: str) -> Optional[Dict]:
 
 def _extract_class_name(text: str, subject: str) -> Optional[str]:
     """Extract class name/type from email text or subject."""
-    # MindBody format: "Signature50: Full BodyAnisha Goel" - extract just the class part
-    # Pattern matches "Signature50: Full Body" stopping before the instructor name
-    mindbody_pattern = r'(Signature50:\s*(?:Full Body|Upper Body|Lower Body|Core & More))'
-    match = re.search(mindbody_pattern, text, re.IGNORECASE)
+    # MindBody format: "Focus50: Core + Lower Body..." or "Signature50: Full Body..."
+    # Just capture the class type prefix before the colon (e.g. "Focus50", "Advanced65")
+    mindbody_pattern = r'((?:Signature50|Focus50|Advanced65|Foundations50|Power30)):'
+    match = re.search(mindbody_pattern, text)
     if match:
         return match.group(1).strip()
 
-    # Common Solidcore class types
+    # Common Solidcore class types (fallback)
     class_patterns = [
         r'(Foundations[:\s]*[A-Za-z\s]*)',
         r'(Full Body)',
