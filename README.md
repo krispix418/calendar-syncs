@@ -1,150 +1,132 @@
 # Calendar Syncs
 
-Automated calendar management for fitness activities:
-1. **Solidcore Sync**: Automatically sync Solidcore class bookings from Gmail to Google Calendar
-2. **Gym Workout Scheduler**: Generate monthly gym workout schedules that intelligently work around Solidcore classes
+Personal fitness calendar automation — syncs Solidcore class bookings from Gmail and generates intelligent gym workout schedules around them.
 
 ## What It Does
 
-This tool searches your Gmail for Solidcore class confirmation emails, extracts the class details (date, time, location, instructor), and creates calendar events in your Google Calendar. It includes duplicate detection to avoid creating the same event multiple times.
+Two scripts work together to keep a fitness calendar fully automated:
 
-## Setup
+1. **Solidcore Sync** — scans Gmail for MindBody booking/cancellation emails and creates (or removes) the corresponding Google Calendar events
+2. **Gym Scheduler** — generates a month of gym workout events, scheduling around Solidcore classes, rest days, and vacation blocks
 
-1. **Create a Google Cloud Project** and enable Gmail and Calendar APIs
-   - Visit [Google Cloud Console](https://console.cloud.google.com/)
-   - Create OAuth 2.0 credentials (Desktop app)
-   - Download `credentials.json` and place it in this directory
+## Architecture
 
-2. **Install Python dependencies**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   ```
+```
+Gmail (MindBody emails)
+        │
+        ▼
+solidcore-gcal-sync/
+  email_parser.py      ← parses booking + cancellation emails
+  calendar_manager.py  ← creates/deletes Google Calendar events
+        │
+        ▼
+Google Calendar (Solidcore events)
+        │
+        ▼
+gym-split-scheduler/
+  workout_scheduler.py ← reads calendar, applies scheduling logic, creates gym events
+        │
+        ▼
+Google Calendar (full month of gym + cardio events)
+```
 
-3. **Run the sync**
-   ```bash
-   python main.py
-   ```
+Both scripts share a single OAuth2 credential and virtual environment at the repo root.
 
-   On first run, a browser window will open for Google OAuth authorization. This creates a `token.json` file for future automated runs.
-
-## Usage
+## Scheduling Logic (V3)
 
 ### Solidcore Sync
+- Looks back 30 days for booking confirmations (configurable with `--days`)
+- Supports all class types: Signature50, Focus50, Advanced65, Power30, Foundations50
+- Cancellation emails trigger automatic event deletion
+- Duplicate-safe — checks for existing events before creating
 
-Navigate to the solidcore directory:
-```bash
-cd solidcore
-```
+### Gym Scheduler
+- **Tuesday / Thursday**: rest days — always skipped
+- **Monday / Friday**: full workout at 7:15 AM (skipped if Solidcore that day)
+- **Wednesday**: full workout at 8:00 PM (skipped if Solidcore that day)
+- **Saturday / Sunday**: full workout always (Solidcore doesn't block weekends)
+- **Vacation days**: multi-day all-day calendar events are detected and skipped automatically
 
-**Manual Sync:**
-```bash
-# Sync classes from last 30 days (default)
-python main.py
+### Workout Rotation
+4-day upper/lower split cycling through: Upper Push → Lower Hamstrings → Upper Pull → Lower Quads
 
-# Sync classes from last 60 days
-python main.py --days 60
-
-# Preview without creating events (dry run)
-python main.py --dry-run
-
-# Enable verbose logging
-python main.py --verbose
-```
-
-**Automated Sync (Cron Job):**
-```bash
-# Run manually
-./run_sync.sh
-
-# Set up automated daily sync at 10 PM
-crontab -e
-# Add this line:
-0 22 * * * /Users/cjhalim/Desktop/Github/Portfolio/calendar-syncs/solidcore/run_sync.sh
-```
-
-**View sync logs:**
-```bash
-cat sync.log
-```
-
-### Gym Workout Scheduler
-
-Navigate to the gym-workout directory:
-```bash
-cd gym-workout
-```
-
-**Manual Scheduling:**
-```bash
-# Schedule workouts for specific month
-python workout_scheduler.py --month 2025-12
-
-# Preview without creating events (dry run)
-python workout_scheduler.py --month 2025-12 --dry-run
-```
-
-**Automated Scheduling:**
-```bash
-# Run manually for next month
-./run_gym_sync.sh
-
-# Set up automated monthly scheduling on the 25th at 9 AM
-crontab -e
-# Add this line:
-0 9 25 * * /Users/cjhalim/Desktop/Github/Portfolio/calendar-syncs/gym-workout/run_gym_sync.sh
-```
-
-**View gym sync logs:**
-```bash
-cat gym_sync.log
-```
-
-See [gym-workout/README.md](gym-workout/README.md) for detailed gym workout documentation.
+Each calendar event includes full exercise details, current weights/reps, and cardio.
 
 ## Project Structure
 
 ```
 calendar-syncs/
-├── auth.py                    # Shared Google API authentication
-├── credentials.json           # OAuth credentials (create this - NOT in repo)
-├── token.json                # Access token (generated on first run)
-├── requirements.txt          # Python dependencies
-├── venv/                     # Python virtual environment
+├── auth.py                        # Shared Google OAuth2 authentication
+├── requirements.txt               # Python dependencies
+├── credentials.json               # OAuth credentials (not in repo — create your own)
+├── token.json                     # Generated on first auth run (not in repo)
 │
-├── solidcore/                # Solidcore sync automation
-│   ├── main.py              # Main orchestration script
-│   ├── email_parser.py      # Gmail parser for Solidcore emails
-│   ├── calendar_manager.py  # Google Calendar event creator
-│   ├── run_sync.sh          # Automation script for cron jobs
-│   └── sync.log            # Log file with timestamped results
+├── solidcore-gcal-sync/           # Solidcore email → Calendar sync
+│   ├── main.py                    # Orchestration
+│   ├── email_parser.py            # Gmail parser for MindBody emails
+│   ├── calendar_manager.py        # Calendar event creation/deletion
+│   └── run_sync.sh                # Shell wrapper for cron
 │
-└── gym-workout/             # Gym workout scheduler
-    ├── workout_scheduler.py # Main scheduler script
-    ├── workout_plan.json    # Complete workout plan
-    ├── progression_state.json # Weight/rep progression tracking
-    ├── run_gym_sync.sh     # Automation script
-    ├── gym_sync.log       # Log file (created on first run)
-    └── README.md          # Detailed gym workout documentation
+└── gym-split-scheduler/           # Monthly gym workout scheduler
+    ├── workout_scheduler.py       # Main scheduler
+    ├── workout_plan.json          # Exercises, sets, reps, cardio
+    ├── progression_state.json     # Tracks weights + deload cycle
+    └── run_gym_sync.sh            # Shell wrapper for cron
 ```
 
-## Security Notes
+## Setup
 
-⚠️ **IMPORTANT**: Keep `credentials.json` and `token.json` secure and NEVER commit them to version control. These files are listed in `.gitignore` to prevent accidental commits.
+### 1. Google Cloud credentials
+- Create a project at [Google Cloud Console](https://console.cloud.google.com/)
+- Enable Gmail API and Google Calendar API
+- Create OAuth 2.0 credentials (Desktop app type)
+- Download as `credentials.json` and place at repo root
 
-## Features
+### 2. Python environment
+```bash
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-- Searches Gmail for Solidcore booking confirmations
-- Extracts class details: name, date/time, location, instructor, door codes
-- Creates Google Calendar events with proper timezone handling (Eastern Time)
-- Duplicate detection (won't create the same event twice)
-- Configurable search range (days back)
-- Dry run mode to preview changes
-- Comprehensive logging and error handling
+### 3. First run (triggers browser OAuth)
+```bash
+cd solidcore-gcal-sync && python main.py
+```
+
+## Usage
+
+### Solidcore Sync
+```bash
+cd solidcore-gcal-sync
+source ../venv/bin/activate
+
+python main.py              # sync last 30 days
+python main.py --days 60    # sync last 60 days
+python main.py --dry-run    # preview only
+```
+
+### Gym Scheduler
+```bash
+cd gym-split-scheduler
+source ../venv/bin/activate
+
+python workout_scheduler.py --month 2026-04
+python workout_scheduler.py --month 2026-04 --dry-run
+```
+
+## Design Decisions
+
+- **Shared auth layer** — one `credentials.json` and `token.json` at root, imported by both scripts via `auth.py`. Avoids duplicating OAuth boilerplate across scripts.
+- **Solidcore-first pipeline** — the gym scheduler reads existing Solidcore events from the calendar rather than re-parsing emails, keeping the two scripts decoupled.
+- **Vacation detection** — multi-day all-day events are treated as travel/vacation blocks. Gym events are skipped entirely for those dates.
+- **No cardio-after-Solidcore on weekdays (V3)** — simplified from V2 which scheduled post-Solidcore cardio sessions. Recovery matters more than volume.
+
+## Security
+
+`credentials.json` and `token.json` are gitignored. Never commit them.
 
 ## Requirements
 
-- Python 3.7+
-- Google account with Gmail and Calendar access
-- Solidcore class booking confirmation emails in Gmail
+- Python 3.9+
+- Google account with Gmail and Calendar API access
