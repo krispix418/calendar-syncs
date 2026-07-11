@@ -588,11 +588,18 @@ def _locations_similar(location1: str, location2: str) -> bool:
         bool: True if locations are similar
     """
     try:
-        # Extract key words (remove common words)
-        common_words = {'at', 'the', 'a', 'an', 'in', 'on', 'studio', 'location', 'class'}
+        import string
+        # Strip punctuation before tokenizing so "ma," matches "ma"
+        translator = str.maketrans('', '', string.punctuation)
+        clean1 = location1.translate(translator)
+        clean2 = location2.translate(translator)
 
-        words1 = set(location1.split()) - common_words
-        words2 = set(location2.split()) - common_words
+        # Extract key words (remove common/noise words including state abbreviations)
+        common_words = {'at', 'the', 'a', 'an', 'in', 'on', 'studio', 'location', 'class',
+                        'ma', 'ca', 'ny', 'tx', 'fl', 'wa', 'or', 'il', 'pa', 'oh'}
+
+        words1 = set(clean1.split()) - common_words
+        words2 = set(clean2.split()) - common_words
 
         if not words1 or not words2:
             return location1 == location2

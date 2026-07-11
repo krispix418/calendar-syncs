@@ -362,9 +362,9 @@ def determine_event_type(date, day_of_week, solidcore_schedule):
             # WITH Solidcore on a weekday: skip (no post-Solidcore cardio on weekdays)
             return (None, None)
 
-        # Monday or Friday WITHOUT Solidcore: full workout at 7:15 AM
+        # Monday or Friday WITHOUT Solidcore: full workout at 7 PM
         if day_of_week in [0, 4]:
-            return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 7, 15)))
+            return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 19, 0)))
 
         # Wednesday WITHOUT Solidcore: full workout at 8 PM
         return ("full_workout", EASTERN.localize(datetime(date.year, date.month, date.day, 20, 0)))
@@ -465,10 +465,7 @@ def determine_workout_schedule(year, month, solidcore_schedule, workout_rotation
 
             # Adjust start time for Monday/Friday based on duration
             if day_of_week in [0, 4]:
-                if duration == 105:  # Lower body workouts
-                    start_time = EASTERN.localize(datetime(year, month, day, 7, 15))
-                else:  # Upper body workouts (85 min)
-                    start_time = EASTERN.localize(datetime(year, month, day, 7, 30))
+                start_time = EASTERN.localize(datetime(year, month, day, 19, 0))
 
             schedule.append({
                 'date': date,
